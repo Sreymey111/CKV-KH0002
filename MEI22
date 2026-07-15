@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>English A1 — កម្មវិធីសិក្សា</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F5F4EC;
+    --surface: #FFFFFF;
+    --surface-2: #EEF2ED;
+    --ink: #21281F;
+    --ink-soft: #5C6355;
+    --teal: #146C5C;
+    --teal-dark: #0C4E42;
+    --teal-tint: #E1EFEA;
+    --gold: #C9971B;
+    --gold-tint: #FBF0D6;
+    --coral: #D2542E;
+    --coral-tint: #FBE7DF;
+    --border: #E2E0D3;
+    --radius: 16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter','Noto Sans Khmer',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .km{font-family:'Noto Sans Khmer','Inter',sans-serif;}
+  .app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:2rem;}
+
+  header.top{
+    position:sticky;top:0;z-index:10;
+    background:var(--teal);color:#fff;
+    padding:1.1rem 1.25rem 1.4rem;
+    border-radius:0 0 24px 24px;
+  }
+  header.top .brand{
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;
+    display:flex;align-items:center;gap:8px;
+  }
+  header.top .brand .badge{
+    font-family:'Inter';font-weight:600;font-size:12px;
+    background:rgba(255,255,255,0.18);padding:3px 9px;border-radius:20px;
+  }
+  .progress-wrap{margin-top:14px;}
+  .progress-label{font-size:12.5px;opacity:0.85;margin-bottom:6px;display:flex;justify-content:space-between;}
+  .progress-track{height:8px;background:rgba(255,255,255,0.22);border-radius:20px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--gold);border-radius:20px;transition:width .4s ease;}
+
+  main{padding:1.25rem 1.1rem;}
+
+  /* ===== Home: lesson list ===== */
+  .section-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:18px;margin:0 0 12px;}
+  .lesson-list{display:flex;flex-direction:column;gap:10px;}
+  .lesson-card{
+    display:flex;align-items:center;gap:12px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px 14px;cursor:pointer;transition:transform .12s ease, border-color .12s ease;
+  }
+  .lesson-card:active{transform:scale(0.98);}
+  .lesson-card.locked{opacity:0.55;cursor:default;}
+  .lesson-card.done{border-color:var(--teal);}
+  .l-num{
+    width:38px;height:38px;border-radius:50%;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;
+    background:var(--surface-2);color:var(--ink-soft);
+  }
+  .lesson-card.done .l-num{background:var(--teal);color:#fff;}
+  .lesson-card.current .l-num{background:var(--gold);color:#fff;}
+  .l-body{flex:1;min-width:0;}
+  .l-title-en{font-weight:600;font-size:14.5px;}
+  .l-title-km{font-size:12.5px;color:var(--ink-soft);margin-top:1px;}
+  .l-status{font-size:11px;color:var(--teal);flex:0 0 auto;}
+  .l-lock-icon{color:var(--ink-soft);font-size:16px;flex:0 0 auto;}
+
+  /* ===== Lesson detail ===== */
+  .back-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;cursor:pointer;color:var(--teal-dark);font-weight:500;font-size:14px;}
+  .back-row svg{flex:0 0 auto;}
+  .l-header{margin-bottom:1.1rem;}
+  .l-eyebrow{font-size:12px;color:var(--teal);font-weight:600;letter-spacing:.03em;text-transform:uppercase;}
+  .l-name-en{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;margin:2px 0 4px;}
+  .l-name-km{font-size:14px;color:var(--ink-soft);}
+  .goal-box{
+    background:var(--gold-tint);border-radius:12px;padding:10px 14px;margin-top:12px;
+    font-size:13.5px;color:#5C4712;
+  }
+
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:1rem 1.1rem;margin-bottom:1rem;
+  }
+  .card h3{
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;margin:0 0 10px;
+    display:flex;align-items:center;gap:6px;color:var(--teal-dark);
+  }
+
+  /* flashcards */
+  .fc-progress{font-size:12px;color:var(--ink-soft);text-align:center;margin-bottom:8px;}
+  .flip-card{
+    background:var(--teal-tint);border-radius:14px;min-height:130px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:1rem;cursor:pointer;user-select:none;
+  }
+  .flip-front{font-family:'Fredoka',sans-serif;font-weight:600;font-size:26px;color:var(--teal-dark);}
+  .flip-back{display:none;}
+  .flip-back .en{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;color:var(--teal-dark);}
+  .flip-back .kh-read{font-size:14px;color:var(--teal);margin-top:4px;}
+  .flip-back .kh-mean{font-size:16px;font-weight:500;margin-top:6px;}
+  .flip-hint{font-size:11px;color:var(--ink-soft);margin-top:8px;}
+  .fc-nav{display:flex;gap:8px;margin-top:10px;}
+  .fc-nav button{flex:1;}
+
+  button{
+    font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;
+    background:var(--surface);border:1px solid var(--border);border-radius:10px;
+    padding:9px 12px;color:var(--ink);cursor:pointer;
+  }
+  button:active{transform:scale(0.97);}
+  button.primary{background:var(--teal);border-color:var(--teal);color:#fff;}
+  button.full{width:100%;padding:12px;font-size:14.5px;font-weight:600;border-radius:12px;}
+
+  .sentence{margin-bottom:10px;}
+  .sentence .en{font-weight:600;font-size:14.5px;}
+  .sentence .kh{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+
+  table.gram{width:100%;border-collapse:collapse;font-size:13px;}
+  table.gram th{background:var(--surface-2);text-align:left;padding:6px 8px;font-weight:600;}
+  table.gram td{padding:6px 8px;border-top:1px solid var(--border);}
+
+  /* quiz */
+  .quiz-q{font-family:'Fredoka',sans-serif;font-weight:600;font-size:26px;text-align:center;padding:1.2rem 0 1rem;}
+  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .quiz-opts button{padding:12px 8px;font-size:13px;}
+  .quiz-opts button.correct{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .quiz-opts button.wrong{background:var(--coral-tint);border-color:var(--coral);color:var(--coral);}
+  .quiz-feedback{text-align:center;font-size:13.5px;min-height:18px;margin-top:10px;font-weight:500;}
+  .quiz-result{text-align:center;padding:1.5rem 0;}
+  .quiz-result .big{font-family:'Fredoka',sans-serif;font-weight:600;font-size:34px;color:var(--teal);}
+
+  .empty-note{
+    text-align:center;color:var(--ink-soft);font-size:13px;
+    padding:2rem 1rem;background:var(--surface);border-radius:var(--radius);border:1px dashed var(--border);
+  }
+
+  /* ===== Profile / avatar header button ===== */
+  .header-row{display:flex;align-items:center;gap:10px;}
+  .avatar-btn{
+    width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
+    border:2px solid rgba(255,255,255,0.5);overflow:hidden;
+  }
+  .avatar-btn svg{width:100%;height:100%;}
+  .greeting{font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;}
+  .greeting-sub{font-size:11.5px;opacity:0.85;margin-top:1px;}
+
+  /* ===== Profile builder screen ===== */
+  .avatar-stage{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--teal-tint);border-radius:20px;padding:1.2rem;margin-bottom:1.1rem;
+  }
+  .avatar-stage svg{width:150px;height:150px;}
+  .field-label{font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;margin:0 0 8px;color:var(--teal-dark);}
+  .name-input{
+    width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--border);
+    font-size:15px;font-family:'Inter','Noto Sans Khmer',sans-serif;background:var(--surface);
+  }
+  .swatch-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.1rem;}
+  .swatch{
+    width:36px;height:36px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .swatch.selected{border-color:var(--ink);}
+  .opt-row{display:flex;gap:8px;margin-bottom:1.1rem;flex-wrap:wrap;}
+  .opt-btn{padding:9px 14px;border-radius:20px;font-size:13px;}
+  .opt-btn.selected{background:var(--teal);border-color:var(--teal);color:#fff;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const LESSONS = [
+  {
+    id:1, en:"Greetings & Introductions", km:"ការសួរសុខទុក្ខ និងណែនាំខ្លួន",
+    goal:"នៅចុងមេរៀន អ្នកនឹងអាចសួរសុខទុក្ខ ណែនាំខ្លួនឯង សួរឈ្មោះអ្នកដទៃ និងលាគ្នាបានយ៉ាងសមរម្យ។",
+    vocab:[
+      ["Hello","ហេឡូ","សួស្តី"],["Hi","ហាយ","សួស្តី (ធម្មតា)"],
+      ["Good morning","ហ្គុដ ម៉នីង","អរុណសួស្តី"],["Good afternoon","ហ្គុដ អាហ្វធើនូន","ទិវាសួស្តី"],
+      ["Good evening","ហ្គុដ អ៊ីវនីង","សាយណ្ហសួស្តី"],["Good night","ហ្គុដណាយ","រាត្រីសួស្តី"],
+      ["Goodbye","ហ្គុដបាយ","លាហើយ"],["See you later","ស៊ី យូ លេយធើ","ជួបគ្នាពេលក្រោយ"],
+      ["Excuse me","អិចស្ក្យូស មី","សុំទោស (ហៅចាប់អារម្មណ៍)"],["Sorry","សរី","សុំទោស"],
+      ["Thank you","សែងឃ្យូ","អរគុណ"],["You're welcome","យ័រ វែលខឹម","មិនអីទេ"],
+      ["How are you?","ហៅ អា យូ","តើអ្នកសុខសប្បាយទេ?"],["I'm fine","អាមហ្វាញ","ខ្ញុំសុខសប្បាយ"],
+      ["Name","ណេម","ឈ្មោះ"],["Meet","មីត","ជួប"],["Nice","ណាយស៍","ល្អ/រីករាយ"],
+      ["Welcome","វែលខឹម","សូមស្វាគមន៍"],["Friend","ហ្វ្រែន","មិត្តភក្តិ"],["Teacher","ធីឈើ","គ្រូបង្រៀន"]
+    ],
+    sentences:[
+      ["Hello! My name is Srey Mey.","សួស្តី! ខ្ញុំឈ្មោះ ស្រីម៉ី។"],
+      ["What's your name?","តើអ្នកឈ្មោះអ្វី?"],
+      ["Nice to meet you.","រីករាយដែលបានស្គាល់អ្នក។"],
+      ["Nice to meet you, too.","ខ្ញុំក៏រីករាយដែលបានស្គាល់អ្នកដែរ។"],
+      ["How are you?","តើអ្នកសុខសប្បាយទេ?"],
+      ["I'm fine, thank you. And you?","ខ្ញុំសុខសប្បាយ អរគុណ។ ចុះអ្នកវិញ?"],
+      ["Good night! See you tomorrow.","រាត្រីសួស្តី! ជួបគ្នាថ្ងៃស្អែក។"],
+      ["Excuse me, what's your name again?","សុំទោស តើអ្នកឈ្មោះអ្វីម្តងទៀត?"]
+    ],
+    grammar:{title:"Verb \"to be\" — Positive, Negative, Question", rows:[
+      ["I","am / am not","I am Srey Mey. / I am not a teacher."],
+      ["You","are / are not","Are you a student?"],
+      ["He/She","is / is not","Is she your friend?"]
+    ]},
+    dialogue:[
+      ["Anna","Hello! Good morning.","សួស្តី! អរុណសួស្តី។"],
+      ["Sokha","Good morning! How are you?","អរុណសួស្តី! តើអ្នកសុខសប្បាយទេ?"],
+      ["Anna","I'm fine, thank you. What's your name?","ខ្ញុំសុខសប្បាយ អរគុណ។ តើអ្នកឈ្មោះអ្វី?"],
+      ["Sokha","My name is Sokha. Nice to meet you.","ខ្ញុំឈ្មោះសុខា។ រីករាយដែលបានស្គាល់អ្នក។"],
+      ["Anna","Nice to meet you, too. See you later!","ខ្ញុំក៏រីករាយដែរ។ ជួបគ្នាពេលក្រោយ!"],
+      ["Sokha","Goodbye!","លាហើយ!"]
+    ],
+    exercises:[
+      "1. Complete: Hello! My name ______ Dara.",
+      "2. Complete: ______ you a student? Yes, I am.",
+      "3. Translate to English: តើអ្នកសុខសប្បាយទេ?",
+      "4. Write a short greeting dialogue between you and a new friend (3-4 lines)."
+    ]
+  },
+  {
+    id:2, en:"Personal Information", km:"ព័ត៌មានផ្ទាល់ខ្លួន",
+    goal:"បន្ទាប់ពីរៀនមេរៀននេះ អ្នកនឹងអាចសួរ និងឆ្លើយអំពីឈ្មោះ អាយុ ប្រទេស ទីកន្លែងរស់នៅ លេខទូរស័ព្ទ ការសិក្សា ការងារ និងចំណង់ចំណូលចិត្ត។",
+    vocab:[
+      ["Personal information","ផើសិនណល អ៊ីនហ្វមេហ្សិន","ព័ត៌មានផ្ទាល់ខ្លួន"],["Name","ណេម","ឈ្មោះ"],
+      ["Age","អេជ","អាយុ"],["Country","ខាន់ទ្រី","ប្រទេស"],["City","ស៊ីធី","ទីក្រុង"],
+      ["Village","វីឡិជ","ភូមិ"],["Address","អាឌ្រែស","អាសយដ្ឋាន"],
+      ["Phone number","ហ្វូន ណាំបឺរ","លេខទូរស័ព្ទ"],["Email","អ៊ីមែល","អ៊ីមែល"],
+      ["Live","លីវ","រស់នៅ"],["Study","ស្តាឌី","សិក្សា"],["Work","វើក","ធ្វើការ"],
+      ["Student","ស្ទូឌិនត៍","និស្សិត/សិស្ស"],["Job","ចប់","ការងារ/មុខរបរ"],
+      ["Occupation","អុកឃ្យូផេសិន","មុខរបរ"],["Company","ខមផានី","ក្រុមហ៊ុន"],
+      ["Married","ម៉ារីដ","រៀបការហើយ"],["Single","ស៊ីងហ្គល","នៅលីវ"],
+      ["Language","ឡេនហ្គ្វិច","ភាសា"],["Speak","ស្ពីក","និយាយ"],
+      ["Nationality","ណេសិនណាលីធី","សញ្ជាតិ"],["Hobby","ហប់ប៊ី","ចំណង់ចំណូលចិត្ត"]
+    ],
+    sentences:[
+      ["How old are you?","តើអ្នកអាយុប៉ុន្មាន?"],
+      ["Where are you from?","តើអ្នកមកពីណា?"],
+      ["Where do you live?","តើអ្នករស់នៅឯណា?"],
+      ["What do you do?","តើអ្នកធ្វើអ្វី?"],
+      ["What's your phone number?","តើលេខទូរស័ព្ទរបស់អ្នកគឺអ្វី?"],
+      ["What's your email address?","តើអ៊ីមែលរបស់អ្នកគឺអ្វី?"],
+      ["Are you married or single?","តើអ្នករៀបការហើយ ឬនៅលីវ?"],
+      ["What languages do you speak?","តើអ្នកចេះនិយាយភាសាអ្វីខ្លះ?"]
+    ],
+    grammar:{title:"Wh- Questions with \"be\"", rows:[
+      ["What","+ is/are","What is your name? / What are your hobbies?"],
+      ["Where","+ is/are","Where are you from?"],
+      ["How old","+ is/are","How old are you?"]
+    ]},
+    dialogue:[
+      ["Anna","What's your name?","តើអ្នកឈ្មោះអ្វី?"],
+      ["Srey Mey","My name is Srey Mey.","ខ្ញុំឈ្មោះស្រីម៉ី។"],
+      ["Anna","How old are you?","តើអ្នកអាយុប៉ុន្មាន?"],
+      ["Srey Mey","I am 22 years old.","ខ្ញុំអាយុ ២២ ឆ្នាំ។"],
+      ["Anna","Where are you from, and where do you live?","តើអ្នកមកពីណា ហើយរស់នៅឯណា?"],
+      ["Srey Mey","I am from Cambodia. I live in Siem Reap.","ខ្ញុំមកពីកម្ពុជា។ ខ្ញុំរស់នៅសៀមរាប។"],
+      ["Anna","What do you do, and what are your hobbies?","តើអ្នកធ្វើអ្វី ហើយចំណង់ចំណូលចិត្តអ្វី?"],
+      ["Srey Mey","I am a university student. I like listening to music and taking photos.","ខ្ញុំជានិស្សិត។ ខ្ញុំចូលចិត្តស្តាប់តន្ត្រី និងថតរូប។"]
+    ],
+    exercises:[
+      "1. Complete: I ______ from Cambodia. (am/is/are)",
+      "2. Complete: ______ do you live? — I live in Siem Reap.",
+      "3. Translate to English: តើលេខទូរស័ព្ទរបស់អ្នកគឺអ្វី?",
+      "4. Answer these 7 questions about yourself: name, age, country, city, job, phone number, hobbies."
+    ]
+  }
+];
+for(let i=3;i<=30;i++){
+  const titles = ["Numbers & Age","Countries & Nationalities","My Family","Jobs & Occupations","Daily Routine","Telling the Time","Days, Months & Dates","Likes & Dislikes","Food & Drinks","At a Restaurant","My Home","There is / There are","Places in Town","Asking for Directions","Shopping & Prices","Clothes & Colors","Weather & Seasons","Hobbies & Free Time","Can / Can't","Present Simple","Present Continuous","Past Simple: was/were","Common Past Verbs","Future Plans: going to","Feelings & Emotions","Health & Body","Real-Life Conversation Practice","A1 Final Review & Test"];
+  LESSONS.push({id:i, en:titles[i-3], km:"", comingSoon:true});
+}
+
+let progress = {completed:{}, scores:{}};
+let profile = null; // {name, skin, hair, hairStyle, outfit, accessory}
+let view = {screen:"home", lessonId:null, fcIndex:0, fcFlipped:false, quiz:null};
+
+const AVATAR_OPTS = {
+  skin: ["#FBE3C6","#F2C9A0","#D9A066","#A6693E","#6B4226"],
+  hair: ["#2B1B12","#6B3E22","#C7963C","#D9587A","#4A4A4A","#3C6FA6"],
+  hairStyle: [["short","ខ្លី"],["long","វែង"],["ponytail","ក្រវាត់សក់"]],
+  outfit: ["#146C5C","#D2542E","#C9971B","#6B4FA0","#2F7FBF"],
+  accessory: [["none","គ្មាន"],["glasses","វែនតា"],["bow","ខ្សែក"]]
+};
+function defaultProfile(){
+  return {name:"", skin:AVATAR_OPTS.skin[1], hair:AVATAR_OPTS.hair[0], hairStyle:"short", outfit:AVATAR_OPTS.outfit[0], accessory:"none"};
+}
+
+function avatarSVG(p, size){
+  size = size || 120;
+  let hairBack = "";
+  if(p.hairStyle==="long") hairBack = `<rect x="22" y="52" width="76" height="58" rx="26" fill="${p.hair}"/>`;
+  if(p.hairStyle==="ponytail") hairBack = `<circle cx="94" cy="66" r="9" fill="${p.hair}"/><rect x="88" y="58" width="13" height="30" rx="6" fill="${p.hair}"/>`;
+  let accessory = "";
+  if(p.accessory==="glasses"){
+    accessory = `<g stroke="#2B281F" stroke-width="3" fill="none"><circle cx="48" cy="52" r="10"/><circle cx="76" cy="52" r="10"/><line x1="58" y1="52" x2="66" y2="52"/></g>`;
+  } else if(p.accessory==="bow"){
+    accessory = `<g fill="${p.outfit==='#D2542E' ? '#146C5C' : '#D2542E'}"><path d="M60 8 L74 2 L74 16 Z"/><path d="M60 8 L46 2 L46 16 Z"/><circle cx="60" cy="8" r="4"/></g>`;
+  }
+  return `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
+    ${hairBack}
+    <rect x="24" y="100" width="72" height="48" rx="22" fill="${p.outfit}"/>
+    <circle cx="60" cy="52" r="34" fill="${p.skin}"/>
+    <path d="M26 52 Q60 8 94 52 Q92 24 60 18 Q28 24 26 52 Z" fill="${p.hair}"/>
+    <circle cx="49" cy="54" r="3.5" fill="#2B281F"/>
+    <circle cx="71" cy="54" r="3.5" fill="#2B281F"/>
+    <path d="M50 66 Q60 74 70 66" stroke="#2B281F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    ${accessory}
+  </svg>`;
+}
+
+async function loadProgress(){
+  try{
+    const r = await window.storage.get("a1-progress");
+    if(r && r.value) progress = JSON.parse(r.value);
+  }catch(e){}
+  try{
+    const r2 = await window.storage.get("a1-profile");
+    if(r2 && r2.value) profile = JSON.parse(r2.value);
+  }catch(e){}
+  if(!profile || !profile.name){
+    view = {screen:"profile", draft:defaultProfile(), isNew:true};
+  }
+  render();
+}
+async function saveProgress(){
+  try{ await window.storage.set("a1-progress", JSON.stringify(progress)); }catch(e){}
+}
+async function saveProfile(){
+  profile = Object.assign({}, view.draft);
+  try{ await window.storage.set("a1-profile", JSON.stringify(profile)); }catch(e){}
+  goHome();
+}
+function openProfileEdit(){
+  view = {screen:"profile", draft:Object.assign({}, profile), isNew:false};
+  render();
+}
+function setDraft(key, val){ view.draft[key] = val; render(); }
+
+function completedCount(){ return Object.keys(progress.completed).length; }
+
+function goHome(){ view = {screen:"home", lessonId:null, fcIndex:0, fcFlipped:false, quiz:null}; render(); }
+function openLesson(id){
+  const lesson = LESSONS.find(l=>l.id===id);
+  if(lesson.comingSoon) return;
+  view = {screen:"lesson", lessonId:id, fcIndex:0, fcFlipped:false, quiz:null};
+  render();
+}
+
+function isUnlocked(id){
+  if(id===1) return true;
+  return !!progress.completed[id-1];
+}
+
+function renderHome(){
+  const total = LESSONS.length;
+  const done = completedCount();
+  let html = `<main>`;
+  html += `<div class="section-title km">មេរៀនទាំងអស់</div><div class="lesson-list">`;
+  LESSONS.forEach(l=>{
+    const unlocked = isUnlocked(l.id);
+    const isDone = !!progress.completed[l.id];
+    const cls = ["lesson-card"];
+    if(!unlocked) cls.push("locked");
+    if(isDone) cls.push("done");
+    if(unlocked && !isDone && l.id === done+1) cls.push("current");
+    html += `<div class="${cls.join(' ')}" onclick="${unlocked && !l.comingSoon ? `openLesson(${l.id})` : ''}">`;
+    html += `<div class="l-num">${isDone ? '✓' : l.id}</div>`;
+    html += `<div class="l-body"><div class="l-title-en">${l.en}</div>`;
+    html += `<div class="l-title-km km">${l.km || (l.comingSoon ? 'មេរៀននេះនឹងបន្ថែមឆាប់ៗនេះ' : '')}</div></div>`;
+    if(!unlocked) html += `<span class="l-lock-icon">🔒</span>`;
+    else if(isDone) html += `<span class="l-status km">បញ្ចប់</span>`;
+    html += `</div>`;
+  });
+  html += `</div></main>`;
+  return html;
+}
+
+function renderLesson(){
+  const l = LESSONS.find(x=>x.id===view.lessonId);
+  let html = `<main>`;
+  html += `<div class="back-row" onclick="goHome()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> ត្រឡប់ក្រោយ</div>`;
+  html += `<div class="l-header"><div class="l-eyebrow">មេរៀនទី ${l.id}</div>`;
+  html += `<div class="l-name-en">${l.en}</div><div class="l-name-km km">${l.km}</div>`;
+  html += `<div class="goal-box km">🎯 ${l.goal}</div></div>`;
+
+  // vocab flashcards
+  const v = l.vocab[view.fcIndex];
+  html += `<div class="card"><h3>📇 វាក្យសព្ទ (${view.fcIndex+1}/${l.vocab.length})</h3>`;
+  html += `<div class="flip-card" onclick="flipCard()">`;
+  if(!view.fcFlipped){
+    html += `<div class="flip-front">${v[0]}</div><div class="flip-hint km">ចុចដើម្បីមើលការអាន</div>`;
+  } else {
+    html += `<div class="flip-back" style="display:flex;flex-direction:column;">
+      <div class="en">${v[0]}</div><div class="kh-read km">${v[1]}</div><div class="kh-mean km">${v[2]}</div>
+    </div>`;
+  }
+  html += `</div>`;
+  html += `<div class="fc-nav"><button onclick="fcNav(-1)">◀ មុន</button><button onclick="fcNav(1)">បន្ទាប់ ▶</button></div>`;
+  html += `</div>`;
+
+  // key sentences
+  html += `<div class="card"><h3 class="km">💬 ប្រយោគសំខាន់ៗ</h3>`;
+  l.sentences.forEach(s=>{
+    html += `<div class="sentence"><div class="en">${s[0]}</div><div class="kh km">${s[1]}</div></div>`;
+  });
+  html += `</div>`;
+
+  // grammar
+  html += `<div class="card"><h3>📐 Grammar — ${l.grammar.title}</h3><table class="gram"><tr><th>Subject</th><th>Verb</th><th>Example</th></tr>`;
+  l.grammar.rows.forEach(r=>{ html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`; });
+  html += `</table></div>`;
+
+  // dialogue
+  if(l.dialogue){
+    html += `<div class="card"><h3 class="km">🎤 ហាត់សន្ទនា</h3>`;
+    l.dialogue.forEach(d=>{
+      html += `<div class="sentence"><div class="en"><b>${d[0]}:</b> ${d[1]}</div><div class="kh km">${d[2]}</div></div>`;
+    });
+    html += `<div class="km" style="font-size:12px;color:var(--ink-soft);margin-top:4px;">អានឲ្យបានច្បាស់ ៣ ដង៖ លើកទី១ យឺតៗ, លើកទី២ មិនបកប្រែ, លើកទី៣ ដោយមិនមើលអត្ថបទ។</div>`;
+    html += `</div>`;
+  }
+
+  // exercises
+  if(l.exercises){
+    html += `<div class="card"><h3 class="km">✍️ លំហាត់</h3>`;
+    l.exercises.forEach(ex=>{
+      html += `<div class="sentence km" style="font-size:13.5px;">${ex}</div>`;
+    });
+    html += `<div class="km" style="font-size:12px;color:var(--ink-soft);margin-top:4px;">សរសេរចម្លើយក្នុង Chat ដើម្បីឲ្យខ្ញុំកែឲ្យអ្នក។</div>`;
+    html += `</div>`;
+  }
+
+  html += `<button class="primary full" onclick="startQuiz()">ធ្វើតេស្តខ្លីៗ (Quiz) →</button>`;
+  html += `</main>`;
+  return html;
+}
+
+function flipCard(){ view.fcFlipped = !view.fcFlipped; render(); }
+function fcNav(dir){
+  const l = LESSONS.find(x=>x.id===view.lessonId);
+  view.fcIndex = (view.fcIndex + dir + l.vocab.length) % l.vocab.length;
+  view.fcFlipped = false;
+  render();
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function startQuiz(){
+  const l = LESSONS.find(x=>x.id===view.lessonId);
+  const items = shuffle(l.vocab.map(v=>({q:v[0],a:v[2]}))).slice(0, Math.min(10, l.vocab.length));
+  view.quiz = {items, idx:0, score:0, answered:false};
+  render();
+}
+
+function renderQuiz(){
+  const l = LESSONS.find(x=>x.id===view.lessonId);
+  const q = view.quiz;
+  let html = `<main>`;
+  html += `<div class="back-row" onclick="view.quiz=null;render();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> ត្រឡប់ក្រោយ</div>`;
+
+  if(q.idx >= q.items.length){
+    const pct = Math.round(100*q.score/q.items.length);
+    html += `<div class="card quiz-result">`;
+    html += `<div class="km" style="font-size:14px;color:var(--ink-soft);">លទ្ធផលរបស់អ្នក</div>`;
+    html += `<div class="big">${q.score}/${q.items.length}</div>`;
+    html += `<div class="km" style="margin:6px 0 18px;">${pct>=70 ? 'ល្អណាស់! 🎉' : 'ព្យាយាមម្តងទៀត!'}</div>`;
+    html += `<button class="primary full" onclick="completeLesson(${l.id})">បញ្ចប់មេរៀន ✓</button>`;
+    html += `</div>`;
+    html += `</main>`;
+    return html;
+  }
+
+  const item = q.items[q.idx];
+  const allMeanings = LESSONS.filter(x=>!x.comingSoon).flatMap(x=>x.vocab.map(v=>v[2]));
+  if(!q._opts || q._optsFor !== q.idx){
+    const wrongs = shuffle(allMeanings.filter(m=>m!==item.a)).slice(0,3);
+    q._opts = shuffle([item.a, ...wrongs]);
+    q._optsFor = q.idx;
+  }
+  html += `<div class="card">`;
+  html += `<div class="km" style="font-size:12px;color:var(--ink-soft);text-align:center;">សំណួរ ${q.idx+1} / ${q.items.length}</div>`;
+  html += `<div class="quiz-q">${item.q}</div>`;
+  html += `<div class="quiz-opts km">`;
+  q._opts.forEach(opt=>{
+    let cls = "";
+    if(q.answered){
+      if(opt===item.a) cls="correct";
+      else if(opt===q.picked && opt!==item.a) cls="wrong";
+    }
+    html += `<button class="${cls}" onclick="answerQuiz('${opt.replace(/'/g,"\\'")}')" ${q.answered?'disabled':''}>${opt}</button>`;
+  });
+  html += `</div><div class="quiz-feedback km">${q.answered ? (q.picked===item.a ? 'ត្រឹមត្រូវ! ✓' : 'មិនត្រឹមត្រូវ') : ''}</div>`;
+  if(q.answered){
+    html += `<button class="primary full" style="margin-top:10px;" onclick="nextQuiz()">បន្ទាប់ →</button>`;
+  }
+  html += `</div></main>`;
+  return html;
+}
+
+function answerQuiz(opt){
+  const q = view.quiz;
+  if(q.answered) return;
+  q.answered = true;
+  q.picked = opt;
+  const item = q.items[q.idx];
+  if(opt === item.a) q.score++;
+  render();
+}
+function nextQuiz(){
+  view.quiz.idx++;
+  view.quiz.answered = false;
+  view.quiz.picked = null;
+  render();
+}
+async function completeLesson(id){
+  progress.completed[id] = true;
+  progress.scores[id] = view.quiz.score + "/" + view.quiz.items.length;
+  await saveProgress();
+  goHome();
+}
+
+function render(){
+  const app = document.getElementById("app");
+  const total = LESSONS.length;
+  const done = completedCount();
+  const pct = Math.round(100*done/total);
+
+  let headerHtml;
+  if(view.screen === "profile"){
+    headerHtml = `<header class="top"><div class="brand km">${view.isNew ? 'បង្កើតប្រវត្តិរូប' : 'កែប្រវត្តិរូប'}</div></header>`;
+  } else {
+    const avatarMarkup = profile ? avatarSVG(profile, 44) : `<span style="font-size:20px;">🎓</span>`;
+    headerHtml = `<header class="top">
+      <div class="header-row">
+        <div class="avatar-btn" onclick="openProfileEdit()">${avatarMarkup}</div>
+        <div style="flex:1;">
+          <div class="greeting km">${profile && profile.name ? 'សួស្តី, ' + profile.name + '!' : 'English A1'}</div>
+          <div class="greeting-sub badge" style="display:inline-block;margin-top:2px;">${done}/${total}</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label km"><span>វឌ្ឍនភាព</span><span>${pct}%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+      </div>
+    </header>`;
+  }
+
+  let bodyHtml = "";
+  if(view.screen === "profile") bodyHtml = renderProfile();
+  else if(view.screen === "home") bodyHtml = renderHome();
+  else if(view.screen === "lesson"){
+    bodyHtml = view.quiz ? renderQuiz() : renderLesson();
+  }
+  app.innerHTML = headerHtml + bodyHtml;
+}
+
+function renderProfile(){
+  const d = view.draft;
+  let html = `<main>`;
+  if(!view.isNew){
+    html += `<div class="back-row" onclick="goHome()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> ត្រឡប់ក្រោយ</div>`;
+  } else {
+    html += `<div class="km" style="text-align:center;color:var(--ink-soft);font-size:13.5px;margin-bottom:14px;">មុននឹងចាប់ផ្តើមរៀន សូមបង្កើតតុក្កតារបស់អ្នក!</div>`;
+  }
+
+  html += `<div class="avatar-stage">${avatarSVG(d, 150)}</div>`;
+
+  html += `<div class="field-label km">ឈ្មោះរបស់អ្នក</div>
+    <input class="name-input km" id="name-field" type="text" placeholder="បញ្ចូលឈ្មោះ" value="${d.name.replace(/"/g,'&quot;')}" oninput="onNameInput(this.value)" style="margin-bottom:1.1rem;">`;
+
+  html += `<div class="field-label km">ពណ៌សម្បុរ</div><div class="swatch-row">`;
+  AVATAR_OPTS.skin.forEach(c=>{
+    html += `<div class="swatch ${d.skin===c?'selected':''}" style="background:${c};" onclick="setDraft('skin','${c}')"></div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="field-label km">ពណ៌សក់</div><div class="swatch-row">`;
+  AVATAR_OPTS.hair.forEach(c=>{
+    html += `<div class="swatch ${d.hair===c?'selected':''}" style="background:${c};" onclick="setDraft('hair','${c}')"></div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="field-label km">ម៉ូតសក់</div><div class="opt-row km">`;
+  AVATAR_OPTS.hairStyle.forEach(([val,label])=>{
+    html += `<button class="opt-btn ${d.hairStyle===val?'selected':''}" onclick="setDraft('hairStyle','${val}')">${label}</button>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="field-label km">ពណ៌សម្លៀកបំពាក់</div><div class="swatch-row">`;
+  AVATAR_OPTS.outfit.forEach(c=>{
+    html += `<div class="swatch ${d.outfit===c?'selected':''}" style="background:${c};" onclick="setDraft('outfit','${c}')"></div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="field-label km">គ្រឿងតុបតែង</div><div class="opt-row km">`;
+  AVATAR_OPTS.accessory.forEach(([val,label])=>{
+    html += `<button class="opt-btn ${d.accessory===val?'selected':''}" onclick="setDraft('accessory','${val}')">${label}</button>`;
+  });
+  html += `</div>`;
+
+  html += `<button class="primary full km" id="save-profile-btn" onclick="saveProfile()" ${d.name.trim()?'':'disabled'}>${view.isNew ? 'ចាប់ផ្តើមរៀន' : 'រក្សាទុក'} →</button>`;
+  html += `</main>`;
+  return html;
+}
+
+function onNameInput(val){
+  view.draft.name = val;
+  const btn = document.getElementById("save-profile-btn");
+  if(btn) btn.disabled = !val.trim();
+}
+
+loadProgress();
+</script>
+</body>
+</html>
